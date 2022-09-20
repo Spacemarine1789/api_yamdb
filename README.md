@@ -12,4 +12,4 @@ execute the command: `git fetch` to read info from remote
   
 execute the command: `git pull` to get info from remote (master)
 
-execute the command: `git pull origin <branch name>` to get info from remote. You need to switch to the branch you want to pull.
+execute the command: `git pull origin <branch name>` to get code from remote. You need to switch to the branch you want to pull.
