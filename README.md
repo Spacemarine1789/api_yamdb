@@ -10,4 +10,6 @@ execute the command: `git push origin <branch name>` to push commited changes in
 
 execute the command: `git fetch` to read info from remote
   
-execute the command: `git pull` to get info from remote
+execute the command: `git pull` to get info from remote (master)
+
+execute the command: `git pull origin <branch name>` to get info from remote (master)
