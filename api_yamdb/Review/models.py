@@ -4,6 +4,18 @@ from django.db import models
 User = get_user_model()
 
 
+class genre(models.Model):
+    name = models.CharField(max_length=200, unique=True,
+                            verbose_name='Жанр')
+    slug = models.SlugField(unique=True, verbose_name='Адрес')
+
+    class Meta:
+        ordering = ('-name',)
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
+
+    def __str__(self):
+        return self.name
 
 
 class Category(models.Model):
@@ -37,6 +49,15 @@ class Title(models.Model):
         null=True,
         verbose_name='Категория',
         help_text='Категория, к которой будет относиться произведение'
+    )
+    genre = models.ManyToManyField(
+        genre,
+        on_delete=models.CASCADE,
+        related_name='title',
+        blank=True,
+        null=True,
+        verbose_name='Жанр',
+        help_text='Жанр, к которой будет относиться произведение'
     )
 
     class Meta:
