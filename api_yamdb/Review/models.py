@@ -4,7 +4,7 @@ from django.db import models
 User = get_user_model()
 
 
-class genre(models.Model):
+class Genre(models.Model):
     name = models.CharField(max_length=200, unique=True,
                             verbose_name='Жанр')
     slug = models.SlugField(unique=True, verbose_name='Адрес')
@@ -51,8 +51,7 @@ class Title(models.Model):
         help_text='Категория, к которой будет относиться произведение'
     )
     genre = models.ManyToManyField(
-        genre,
-        on_delete=models.CASCADE,
+        Genre,
         related_name='title',
         blank=True,
         null=True,
