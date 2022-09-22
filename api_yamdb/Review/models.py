@@ -1,4 +1,19 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+ROLES = (
+    ('user', 'Пользователь'),
+    ('admin', 'Админ'),
+    ('moderator', 'Модератор'),
+)
+
+
+class User(AbstractUser):
+    bio = models.TextField(
+        'Биография',
+        blank=True,
+    ),
+    role = models.CharField(max_length=80, choices=ROLES)
 
 
 class Genre(models.Model):
@@ -66,3 +81,53 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name[:10]
+
+
+class Review(models.Model):
+    title_id = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+    )
+    text = models.TextField()
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    score = models.IntegerField(
+        MaxValueValidator=10,
+        MinValueValidator=1,
+    )
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+    class Meta:
+        ordering = ('-pub_date',)
+        verbose_name = 'Обзор'
+        verbose_name_plural = 'Обзоры'
+
+    def __str__(self):
+        return self.text
+
+
+class Comment(models.Model):
+    review_id = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name='сomments',
+    )
+    text = models.TextField()
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='сomments'
+    )
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+    class Meta:
+        ordering = ('-pub_date',)
+        verbose_name = 'Коментарий'
+        verbose_name_plural = 'Коментарии'
+
+    def __str__(self):
+        return self.text
