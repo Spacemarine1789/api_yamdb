@@ -86,7 +86,7 @@ class Title(models.Model):
         verbose_name_plural = 'Произведения'
 
     def get_year(self):
-        return self.year.year
+        return self.year
 
     def __str__(self):
         return self.name[:10]
