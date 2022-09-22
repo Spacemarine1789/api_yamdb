@@ -1,4 +1,28 @@
+import datetime
+from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+ROLES = (
+    ('user', 'Пользователь'),
+    ('admin', 'Администратор'),
+    ('moderator', 'Модератор'),
+)
+
+def current_year():
+    return datetime.date.today().year
+
+
+def max_value_current_year(value):
+    return MaxValueValidator(current_year())(value)
+
+
+class User(AbstractUser):
+    bio = models.TextField(
+        'Биография',
+        blank=True,
+    ),
+    role = models.CharField(max_length=80, choices=ROLES)
 
 
 class Genre(models.Model):
@@ -34,9 +58,9 @@ class Title(models.Model):
         'Наименование',
         help_text='Введите наименование'
     )
-    year = models.DateTimeField(
-        'Год публикации',
-        auto_now_add=True
+    year = models.PositiveIntegerField(
+        default=current_year(), 
+        validators=[MinValueValidator(1984), max_value_current_year]
     )
     category = models.ForeignKey(
         Category,
@@ -66,3 +90,53 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name[:10]
+
+
+class Review(models.Model):
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+    )
+    text = models.TextField()
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    score = models.IntegerField(
+        default=10,
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+    )
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+    class Meta:
+        ordering = ('-pub_date',)
+        verbose_name = 'Обзор'
+        verbose_name_plural = 'Обзоры'
+
+    def __str__(self):
+        return self.text
+
+
+class Comment(models.Model):
+    review = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name='сomments',
+    )
+    text = models.TextField()
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='сomments'
+    )
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+    class Meta:
+        ordering = ('-pub_date',)
+        verbose_name = 'Коментарий'
+        verbose_name_plural = 'Коментарии'
+
+    def __str__(self):
+        return self.text

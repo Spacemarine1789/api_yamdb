@@ -145,7 +145,8 @@ dmypy.json
 
 .mypy_cache
 
-# папки со статикой и медиа
+# Папки со статикой и медиа
 media/
 static/
 api_yamdb/Review/migrations/
+api_yamdb/api/migrations/
