@@ -60,7 +60,7 @@ class Title(models.Model):
     )
     year = models.PositiveIntegerField(
         default=current_year(), 
-        validators=[MinValueValidator(1984), max_value_current_year]
+        validators=[MinValueValidator(1900), max_value_current_year]
     )
     category = models.ForeignKey(
         Category,
