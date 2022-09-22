@@ -1,3 +1,4 @@
+import datetime
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -7,6 +8,13 @@ ROLES = (
     ('admin', 'Администратор'),
     ('moderator', 'Модератор'),
 )
+
+def current_year():
+    return datetime.date.today().year
+
+
+def max_value_current_year(value):
+    return MaxValueValidator(current_year())(value)
 
 
 class User(AbstractUser):
@@ -50,9 +58,9 @@ class Title(models.Model):
         'Наименование',
         help_text='Введите наименование'
     )
-    year = models.DateTimeField(
-        'Год публикации',
-        auto_now_add=True
+    year = models.PositiveIntegerField(
+        default=current_year(), 
+        validators=[MinValueValidator(1984), max_value_current_year]
     )
     category = models.ForeignKey(
         Category,
@@ -85,7 +93,7 @@ class Title(models.Model):
 
 
 class Review(models.Model):
-    title_id = models.ForeignKey(
+    title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
         related_name='reviews',
@@ -112,7 +120,7 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    review_id = models.ForeignKey(
+    review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
         related_name='сomments',
