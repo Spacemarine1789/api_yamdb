@@ -1,4 +1,5 @@
 import datetime
+
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -8,6 +9,7 @@ ROLES = (
     ('admin', 'Администратор'),
     ('moderator', 'Модератор'),
 )
+
 
 def current_year():
     return datetime.date.today().year
@@ -59,9 +61,14 @@ class Title(models.Model):
         help_text='Введите наименование'
     )
     year = models.PositiveIntegerField(
-        default=current_year(), 
+        default=current_year(),
         validators=[MinValueValidator(1900), max_value_current_year]
     )
+    description = models.TextField(verbose_name='Описание',
+                                   max_length=2000,
+                                   blank=True,
+                                   null=True
+                                   ),
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,

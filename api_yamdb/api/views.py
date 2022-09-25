@@ -21,5 +21,4 @@ class GenriesViewSet(viewsets.ModelViewSet):
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitlesSerializer
-    permission_classes = (
-        IsAdminOrReadOnly, permissions.IsAuthenticatedOrReadOnly)
+    permission_classes = (IsAdminOrReadOnly, permissions.IsAuthenticatedOrReadOnly,)

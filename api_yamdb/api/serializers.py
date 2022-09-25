@@ -17,7 +17,13 @@ class GenreSerializer(serializers.ModelSerializer):
         model = Genre
 
 class TitlesSerializer(serializers.ModelSerializer):
-
     class Meta:
         fields = '__all__'
         model = Title
+        extra_kwargs = {
+            'name': {'required': True},
+            'year': {'required': True},
+            'description': {'required': False},
+            'genre': {'required': True},
+            'category': {'required': True},
+        }
