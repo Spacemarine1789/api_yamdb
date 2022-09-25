@@ -80,6 +80,10 @@ class Title(models.Model):
         verbose_name='Жанр',
         help_text='Жанр, к которой будет относиться произведение'
     )
+    rating = models.IntegerField(
+        default=10,
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+    )
 
     class Meta:
         ordering = ('-year',)
