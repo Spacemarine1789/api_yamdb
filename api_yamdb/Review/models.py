@@ -75,7 +75,6 @@ class Title(models.Model):
         Genre,
         related_name='title',
         blank=True,
-        null=True,
         verbose_name='Жанр',
         help_text='Жанр, к которой будет относиться произведение'
     )
