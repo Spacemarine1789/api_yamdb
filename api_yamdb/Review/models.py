@@ -42,9 +42,9 @@ class Genre(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=200, unique=True,
+    name = models.CharField(max_length=250, unique=True,
                             verbose_name='Название категории')
-    slug = models.SlugField(unique=True, verbose_name='Адрес')
+    slug = models.SlugField(max_length=50, unique=True, verbose_name='Адрес')
 
     class Meta:
         ordering = ('-name',)
