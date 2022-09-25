@@ -9,6 +9,7 @@ ROLES = (
     ('moderator', 'Модератор'),
 )
 
+
 def current_year():
     return datetime.date.today().year
 
@@ -58,9 +59,9 @@ class Title(models.Model):
         'Наименование',
         help_text='Введите наименование'
     )
-    year = models.PositiveIntegerField(
-        default=current_year(), 
-        validators=[MinValueValidator(1900), max_value_current_year]
+    year = models.IntegerField(
+        default=current_year(),
+        validators=[MinValueValidator(0), max_value_current_year]
     )
     category = models.ForeignKey(
         Category,
