@@ -7,6 +7,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Category
+        lookup_field = 'slug'
         extra_kwargs = {
             'name': {'required': True, 'max_length': 250},
             'slug': {'required': True, 'max_length': 50},
@@ -17,6 +18,7 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Genre
+        lookup_field = 'slug'
         extra_kwargs = {
             'name': {'required': True, 'max_length': 250},
             'slug': {'required': True, 'max_length': 50},

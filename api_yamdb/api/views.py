@@ -7,6 +7,7 @@ from .serializers import CategorySerializer, GenreSerializer, TitlesSerializer
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
+    lookup_field = 'slug'
     serializer_class = CategorySerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly, IsAdminOrReadOnly,)
@@ -14,6 +15,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class GenriesViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
+    lookup_field = 'slug'
     serializer_class = GenreSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly, IsAdminOrReadOnly,)
