@@ -11,4 +11,5 @@ from .models import User
 class CustomAdmin(UserAdmin):
     pass
 
-admin.site.register(User, CustomAdmin)
+# admin.site.register(User, CustomAdmin)
+admin.site.register(User)

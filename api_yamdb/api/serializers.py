@@ -1,9 +1,6 @@
 
 from .models import User
 from rest_framework import serializers
-from django.contrib.auth.hashers import make_password
-from rest_framework.exceptions import ValidationError
-from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
 
 
@@ -16,25 +13,6 @@ class GetTokenSerializer(serializers.ModelSerializer):
         fields = (
             'username', 'confirmation_code'
         )
-
-# class UserSerializer(serializers.ModelSerializer):
-    
-#     def validate_password(self, value: str) -> str:
-#         """Захешировать пароль юзера."""
-#         return make_password(value)
-
-#     def create(self, validated_data):
-#         """Создать юзера и сохранить захешированный пароль в БД."""
-#         user = super().create(validated_data)
-#         user.set_password(validated_data['password'])
-#         user.save()
-#         return user
-
-#     class Meta:
-#         model = User
-#         fields = (
-#             'username', 'email', 'first_name', 'last_name', 'bio', 'role'
-#         )
 
 
 class SignUpSerializer(serializers.ModelSerializer):
@@ -62,6 +40,9 @@ class SignUpSerializer(serializers.ModelSerializer):
         )
 
 class UserSerializer(serializers.ModelSerializer):
+    
+    bio = serializers.CharField()
+    role = serializers.CharField()
     username = serializers.CharField(
         validators=[
             UniqueValidator(queryset=User.objects.all())
@@ -75,13 +56,19 @@ class UserSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
+        lookup_field = 'username'
         fields = ('username', 'email', 'first_name',
                   'last_name', 'bio', 'role')
         model = User
 
 
 class UserEditSerializer(serializers.ModelSerializer):
+    
+    bio = serializers.CharField()
+    role = serializers.CharField()
+
     class Meta:
+        lookup_field = 'username'
         fields = ('username', 'email', 'first_name',
                   'last_name', 'bio', 'role')
         model = User
