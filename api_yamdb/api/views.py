@@ -1,19 +1,17 @@
-
-from rest_framework.response import Response
-from rest_framework import status
-from .serializers import SignUpSerializer, UserSerializer, GetTokenSerializer, UserEditSerializer
-from .models import User
-from rest_framework import viewsets, permissions
-from rest_framework.decorators import action, api_view, permission_classes
-from django.shortcuts import get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
-from rest_framework_simplejwt.tokens import AccessToken
+from django.shortcuts import get_object_or_404
+from rest_framework import permissions, status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
-from .permissions import (IsAdmin, IsAdminOrReadOnly,
-                          IsAdminModeratorOwnerOrReadOnly)
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import AccessToken
 
-# Create your views here.
+from .models import User
+from .permissions import IsAdmin
+from .serializers import (
+    GetTokenSerializer, SignUpSerializer, UserEditSerializer, UserSerializer,
+)
 
 
 @api_view(['POST'])
@@ -67,6 +65,11 @@ def get_jwt_token(request):
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    """
+    Получить список всех пользователей.
+    Права доступа: Администратор.
+    """
+
     lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -84,6 +87,11 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer_class=UserEditSerializer,
     )
     def users_own_profile(self, request):
+        """
+        Получить данные своей учетной записи.
+        Права доступа: Любой авторизованный пользователь.
+        """
+
         user = request.user
         if request.method == 'GET':
             serializer = self.get_serializer(user)

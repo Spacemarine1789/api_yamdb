@@ -1,7 +1,7 @@
-
-from .models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+
+from .models import User
 
 
 class GetTokenSerializer(serializers.ModelSerializer):
@@ -21,7 +21,7 @@ class SignUpSerializer(serializers.ModelSerializer):
         validators=[
             UniqueValidator(queryset=User.objects.all())
         ]
-        )
+    )
     email = serializers.EmailField(
         validators=[
             UniqueValidator(queryset=User.objects.all())
@@ -39,8 +39,9 @@ class SignUpSerializer(serializers.ModelSerializer):
             'username', 'email'
         )
 
+
 class UserSerializer(serializers.ModelSerializer):
-    
+
     bio = serializers.CharField()
     role = serializers.CharField()
     username = serializers.CharField(
@@ -63,9 +64,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserEditSerializer(serializers.ModelSerializer):
-    
-    bio = serializers.CharField()
-    role = serializers.CharField()
 
     class Meta:
         lookup_field = 'username'

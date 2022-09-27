@@ -1,6 +1,6 @@
-from rest_framework_simplejwt.views import TokenObtainPairView
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
+
 from .views import UserViewSet, get_jwt_token, register
 
 v1_router = DefaultRouter()

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
- 
+
 
 class User(AbstractUser):
     ADMIN = 'admin'
@@ -11,12 +11,12 @@ class User(AbstractUser):
         (MODERATOR, 'Moderator'),
         (USER, 'User'),
     ]
-    bio = models.TextField('Биография', null=True, blank=True),
+    bio = models.TextField('Биография', null=True, blank=True)
     role = models.CharField(
         max_length=80, null=True, blank=True, choices=ROLES, default=USER
-    ),
+    )
     confirmation_code = models.CharField(
-        max_length=80, blank=True, default=""
+        max_length=80, blank=True, default=''
     )
 
     @property
