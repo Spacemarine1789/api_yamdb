@@ -40,8 +40,8 @@ def register(request):
     )
     confirmation_code = default_token_generator.make_token(user)
     send_mail(
-        subject='YaMDb registration',
-        message=f'Your confirmation code: {confirmation_code}',
+        subject='Registration',
+        message=f'Confirmation code: {confirmation_code}',
         from_email=None,
         recipient_list=[user.email],
     )
