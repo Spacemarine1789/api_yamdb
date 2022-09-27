@@ -26,7 +26,7 @@ from .serializers import (
 @permission_classes([permissions.AllowAny])
 def register(request):
     """
-    Получить код подтверждения на переданный email.
+    Получение код подтверждения на переданный email.
     Права доступа: Доступно без токена.
     Использовать имя 'me' в качестве username запрещено.
     Поля email и username должны быть уникальными.
@@ -73,6 +73,12 @@ def get_jwt_token(request):
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    """
+    Получение списка всех пользователей.
+    Права доступа: Администратор.
+    Возможно получение и редактирование собственного профиля
+    зарегестрированым пользователем по адресу 'me'
+    """
     lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -106,12 +112,16 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-class CategoryViewSet(    
+class CategoryViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
+    """
+    Получение списка всех категорий.
+    Права доступа: Администратор или только чтение.
+    """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
@@ -126,6 +136,10 @@ class GenriesViewSet(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
+    """
+    Получение списка всех жанров.
+    Права доступа: Администратор или только чтение.
+    """
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAdminOrReadOnly,)
@@ -135,6 +149,10 @@ class GenriesViewSet(
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
+    """
+    Получение списка всех произведений.
+    Права доступа: Администратор или только чтение.
+    """
     queryset = Title.objects.annotate(
         Avg("reviews__score")
     )
@@ -149,14 +167,18 @@ class TitlesViewSet(viewsets.ModelViewSet):
 
     def validate(self, data):
         """
-        Check that the current year is before entered year.
+        Проверка текущего года.
         """
-        if data['year'] >= int(datetime.now().year):
+        if data['year'] > int(datetime.now().year):
             raise serializers.ValidationError("Введенная дата больше текущей")
         return data
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
+    """
+    Получение списка всех отзывов к произведению.
+    Права доступа: Администратор, модератор, автор или только чтение.
+    """
     serializer_class = ReviewSerializer
     permission_classes = (IsStaffOrAuthorOrReadOnly,)
 
@@ -176,6 +198,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
+    """
+    Получение списка всех коментариев к отзыву.
+    Права доступа: Администратор, модератор, автор или только чтение.
+    """
     serializer_class = CommentSerializer
     permission_classes = (IsStaffOrAuthorOrReadOnly,)
 

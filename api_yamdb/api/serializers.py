@@ -125,11 +125,11 @@ class ReadOnlyTitleSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    title = serializers.SlugRelatedField(
+    title = SlugRelatedField(
         slug_field='name',
         read_only=True,
     )
-    author = serializers.SlugRelatedField(
+    author = SlugRelatedField(
         default=serializers.CurrentUserDefault(),
         slug_field='username',
         read_only=True
@@ -141,11 +141,11 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    review = serializers.SlugRelatedField(
+    review = SlugRelatedField(
         slug_field='text',
         read_only=True
     )
-    author = serializers.SlugRelatedField(
+    author = SlugRelatedField(
         read_only=True, slug_field='username',
         default=serializers.CurrentUserDefault(),
     )
