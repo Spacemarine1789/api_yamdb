@@ -3,12 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-ROLES = (
-    ('user', 'Пользователь'),
-    ('admin', 'Администратор'),
-    ('moderator', 'Модератор'),
-)
-
 
 def current_year():
     return datetime.date.today().year
@@ -19,11 +13,29 @@ def max_value_current_year(value):
 
 
 class User(AbstractUser):
-    bio = models.TextField(
-        'Биография',
-        blank=True,
-    ),
-    role = models.CharField(max_length=80, choices=ROLES)
+    ADMIN = 'admin'
+    MODERATOR = 'moderator'
+    USER = 'user'
+    ROLES = [
+        ('admin', 'admin'),
+        ('moderator', 'moderator'),
+        ('user', 'user'),
+    ]
+    bio = models.TextField('Биография', null=True, blank=True)
+    role = models.CharField(
+        max_length=80, choices=ROLES, default='user'
+    )
+    confirmation_code = models.CharField(
+        max_length=80, blank=True, default=""
+    )
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR
+
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN
 
 
 class Genre(models.Model):
@@ -46,7 +58,6 @@ class Category(models.Model):
     slug = models.SlugField(unique=True, verbose_name='Адрес')
 
     class Meta:
-        ordering = ('-name',)
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
@@ -84,9 +95,13 @@ class Title(models.Model):
         default=10,
         validators=[MinValueValidator(1), MaxValueValidator(10)],
     )
+    description = models.TextField(
+        verbose_name='Описание',
+        null=True,
+        blank=True
+    )
 
     class Meta:
-        ordering = ('-year',)
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
@@ -116,9 +131,14 @@ class Review(models.Model):
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
-        ordering = ('-pub_date',)
         verbose_name = 'Обзор'
         verbose_name_plural = 'Обзоры'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'author'],
+                name='unique_review'
+            )
+        ]
 
     def __str__(self):
         return self.text
@@ -139,7 +159,6 @@ class Comment(models.Model):
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
-        ordering = ('-pub_date',)
         verbose_name = 'Коментарий'
         verbose_name_plural = 'Коментарии'
 
