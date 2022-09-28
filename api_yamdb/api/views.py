@@ -13,6 +13,7 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework_simplejwt.tokens import AccessToken
 
 from .filters import TitleFilter
+from .mixins import CustomViewSet
 from .permissions import IsAdmin, IsAdminOrReadOnly, IsStaffOrAuthorOrReadOnly
 from reviews.models import Category, Genre, Title, Review, User
 from .serializers import (
@@ -36,7 +37,8 @@ def register(request):
     serializer.save()
     user = get_object_or_404(
         User,
-        username=serializer.validated_data['username']
+        username=serializer.validated_data['username'],
+        email=serializer.validated_data['email'],
     )
     confirmation_code = default_token_generator.make_token(user)
     send_mail(
@@ -85,10 +87,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdmin,)
 
     @action(
-        methods=[
-            'get',
-            'patch',
-        ],
+        methods=['get'],
         detail=False,
         url_path='me',
         permission_classes=[permissions.IsAuthenticated],
@@ -96,28 +95,23 @@ class UserViewSet(viewsets.ModelViewSet):
     )
     def users_own_profile(self, request):
         user = request.user
-        if request.method == 'GET':
-            serializer = self.get_serializer(user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-        if request.method == 'PATCH':
-            serializer = self.get_serializer(
-                user,
-                data=request.data,
-                partial=True
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    @users_own_profile.mapping.patch
+    def patch_own_profile(self, request):
+        user = request.user
+        serializer = self.get_serializer(
+            user,
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class CategoryViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet,
-):
+class CategoryViewSet(CustomViewSet):
     """
     Получение списка всех категорий.
     Права доступа: Администратор или только чтение.
@@ -130,12 +124,7 @@ class CategoryViewSet(
     search_fields = ("name",)
 
 
-class GenriesViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet,
-):
+class GenriesViewSet(CustomViewSet):
     """
     Получение списка всех жанров.
     Права доступа: Администратор или только чтение.
